@@ -1,0 +1,173 @@
+{
+  "companies": [
+    {
+      "id": "1",
+      "name": "Google",
+      "logo": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png",
+      "description": "A leading technology company specializing in internet-related services and products.",
+      "website": "https://www.google.com",
+      "values": [
+        {
+          "title": "Focus on the user",
+          "description": "All of our products are designed with the user in mind."
+        },
+        {
+          "title": "Innovation",
+          "description": "We strive to push the boundaries of what's possible."
+        },
+        {
+          "title": "Open Culture",
+          "description": "We believe in transparency and sharing knowledge."
+        }
+      ],
+      "managers": [
+        {
+          "id": "g1",
+          "name": "Sundar Pichai",
+          "role": "CEO",
+          "linkedin": "https://www.linkedin.com/in/sundarpichai"
+        },
+        {
+          "id": "g2",
+          "name": "Ruth Porat",
+          "role": "CFO",
+          "linkedin": "https://www.linkedin.com/in/ruthporat"
+        }
+      ],
+      "financials": {
+        "revenue": "$257.6 billion (2021)",
+        "employees": "156,500+",
+        "founded": "1998",
+        "headquarters": "Mountain View, CA",
+        "stockSymbol": "GOOGL"
+      },
+      "technologies": [
+        {
+          "name": "Python",
+          "category": "language"
+        },
+        {
+          "name": "Java",
+          "category": "language"
+        },
+        {
+          "name": "Go",
+          "category": "language"
+        },
+        {
+          "name": "Kubernetes",
+          "category": "cloud"
+        },
+        {
+          "name": "TensorFlow",
+          "category": "framework"
+        },
+        {
+          "name": "BigQuery",
+          "category": "database"
+        }
+      ],
+      "interviewProcess": [
+        "Initial recruiter screen (30-45 minutes)",
+        "Technical phone screen with engineer (45-60 minutes)",
+        "Virtual onsite with 4-5 interviews (45 minutes each)",
+        "Team matching and offer discussion"
+      ],
+      "benefits": [
+        "Competitive salary and equity",
+        "Comprehensive health coverage",
+        "Generous vacation policy",
+        "Free meals and snacks",
+        "Learning and development budget",
+        "401(k) matching"
+      ],
+      "culture": "Google's culture emphasizes innovation, collaboration, and impact. The company maintains a startup-like atmosphere despite its size, encouraging employees to spend 20% of their time on side projects that could benefit Google.",
+      "notes": "Known for rigorous interview process focusing on algorithms, system design, and coding skills. Preparation in these areas is crucial."
+    },
+    {
+      "id": "2",
+      "name": "Meta",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/220px-Meta_Platforms_Inc._logo.svg.png",
+      "description": "Building technologies to help people connect, find communities, and grow businesses.",
+      "website": "https://www.meta.com",
+      "values": [
+        {
+          "title": "Move Fast",
+          "description": "Quick iteration and rapid development are key to innovation."
+        },
+        {
+          "title": "Be Bold",
+          "description": "We encourage taking calculated risks and learning from failures."
+        },
+        {
+          "title": "Be Open",
+          "description": "We believe in transparent communication and sharing information."
+        }
+      ],
+      "managers": [
+        {
+          "id": "m1",
+          "name": "Mark Zuckerberg",
+          "role": "CEO",
+          "linkedin": "https://www.linkedin.com/in/markzuckerberg"
+        },
+        {
+          "id": "m2",
+          "name": "Javier Olivan",
+          "role": "COO",
+          "linkedin": "https://www.linkedin.com/in/javier-olivan"
+        }
+      ],
+      "financials": {
+        "revenue": "$116.61 billion (2022)",
+        "employees": "87,000+",
+        "founded": "2004",
+        "headquarters": "Menlo Park, CA",
+        "stockSymbol": "META"
+      },
+      "technologies": [
+        {
+          "name": "React",
+          "category": "framework"
+        },
+        {
+          "name": "GraphQL",
+          "category": "framework"
+        },
+        {
+          "name": "PHP",
+          "category": "language"
+        },
+        {
+          "name": "Python",
+          "category": "language"
+        },
+        {
+          "name": "PyTorch",
+          "category": "framework"
+        },
+        {
+          "name": "Cassandra",
+          "category": "database"
+        }
+      ],
+      "interviewProcess": [
+        "Initial recruiter call (30 minutes)",
+        "Technical screen with engineer (45 minutes)",
+        "Virtual onsite with 4 interviews (45 minutes each)",
+        "Team matching",
+        "Offer discussion"
+      ],
+      "benefits": [
+        "Competitive base salary and RSUs",
+        "Comprehensive health insurance",
+        "Unlimited PTO",
+        "Free food and transportation",
+        "Wellness stipend",
+        "Family planning support"
+      ],
+      "culture": "Meta emphasizes moving fast and taking risks. The company values individual impact and encourages employees to think big and take ownership of projects that can affect billions of users.",
+      "notes": "Strong focus on coding skills and system design in interviews. Meta is known for its 'move fast' culture and emphasis on shipping code quickly."
+    }
+  ]
+}

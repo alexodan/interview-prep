@@ -15,12 +15,9 @@ export function useInterviews() {
 
   const loadInterviews = async () => {
     try {
-      const response = await fetch('/api/interviews');
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error);
-      }
+      const response = await fetch("/api/interviews");
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
       setInterviews(data.interviews);
     } catch (err) {
       setError("Failed to load interviews");
@@ -115,8 +112,7 @@ export function useInterviews() {
     return interviews
       .filter(
         (interview) =>
-          interview.status === "scheduled" &&
-          new Date(interview.date) > now
+          interview.status === "scheduled" && new Date(interview.date) > now
       )
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   };
