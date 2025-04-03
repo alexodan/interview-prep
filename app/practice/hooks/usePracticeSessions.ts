@@ -27,11 +27,11 @@ export function usePracticeSessions() {
     }
   };
 
-  const saveSession = async (
-    sessionData: Omit<PracticeSession, "id" | "createdAt">
+  const saveSession = async <T extends PracticeSession>(
+    sessionData: Omit<T, "id" | "createdAt">
   ) => {
     try {
-      const newSession: PracticeSession = {
+      const newSession = {
         ...sessionData,
         id: uuidv4(),
         createdAt: new Date().toISOString(),
@@ -58,9 +58,9 @@ export function usePracticeSessions() {
     }
   };
 
-  const updateSession = async (
+  const updateSession = async <T extends PracticeSession>(
     sessionId: string,
-    updates: Partial<PracticeSession>
+    updates: Partial<Omit<T, "id" | "createdAt" | "type">> & { type: T["type"] }
   ) => {
     try {
       const response = await fetch("/api/practice", {

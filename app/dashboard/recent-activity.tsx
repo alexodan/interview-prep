@@ -1,56 +1,100 @@
-import { Code, FileText, Layers } from "lucide-react"
+"use client";
+
+import * as React from "react";
+import { Code, FileText, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface TimelineItemProps {
+  icon: React.ReactNode;
+  color: string;
+  timestamp: string;
+  title: string;
+  description: string;
+}
+
+interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
+  items: TimelineItemProps[];
+}
+
+const Timeline = React.forwardRef<HTMLDivElement, TimelineProps>(
+  ({ items = [], className, ...props }, ref) => {
+    return (
+      <div ref={ref} className={cn("w-full", className)} {...props}>
+        {items.length > 0 ? (
+          <div>
+            {items.map((item, index) => (
+              <div key={index} className="flex">
+                <div className="flex flex-col items-center">
+                  <div 
+                    className={cn(
+                      "h-8 w-8 rounded-full flex items-center justify-center",
+                      item.color
+                    )}
+                  >
+                    {item.icon}
+                  </div>
+                  {index < items.length - 1 && (
+                    <div className="w-[2px] h-16 bg-border" />
+                  )}
+                </div>
+                <div className="ml-4 pb-8">
+                  <div className="flex items-center">
+                    <h3 className="text-sm font-medium">{item.title}</h3>
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      {item.timestamp}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            No activity to display.
+          </p>
+        )}
+      </div>
+    );
+  }
+);
+
+Timeline.displayName = "Timeline";
 
 export function RecentActivity() {
   const activities = [
     {
-      id: 1,
-      type: "problem",
+      icon: <Code className="h-4 w-4 text-white" />,
+      color: "bg-blue-500",
+      timestamp: "2 hours ago",
       title: "Two Sum",
-      category: "Algorithms",
-      time: "2 hours ago",
-      icon: Code,
+      description: "Completed algorithm practice - Arrays & Hashing",
     },
     {
-      id: 2,
-      type: "note",
+      icon: <Layers className="h-4 w-4 text-white" />,
+      color: "bg-emerald-500",
+      timestamp: "Yesterday",
       title: "Microservices Architecture",
-      category: "System Design",
-      time: "Yesterday",
-      icon: Layers,
+      description: "Added notes on distributed systems design patterns",
     },
     {
-      id: 3,
-      type: "problem",
+      icon: <Code className="h-4 w-4 text-white" />,
+      color: "bg-purple-500",
+      timestamp: "Yesterday",
       title: "LRU Cache",
-      category: "Algorithms",
-      time: "Yesterday",
-      icon: Code,
+      description: "Solved medium difficulty problem - Data Structures",
     },
     {
-      id: 4,
-      type: "note",
+      icon: <FileText className="h-4 w-4 text-white" />,
+      color: "bg-amber-500",
+      timestamp: "2 days ago",
       title: "Leadership Principles",
-      category: "Behavioral",
-      time: "2 days ago",
-      icon: FileText,
+      description: "Updated behavioral interview preparation notes",
     },
-  ]
+  ];
 
-  return (
-    <div className="space-y-4">
-      {activities.map((activity) => (
-        <div key={activity.id} className="flex items-start space-x-4">
-          <div className="p-2 rounded-md bg-muted">
-            <activity.icon className="w-4 h-4" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-sm font-medium leading-none">{activity.title}</p>
-            <p className="text-sm text-muted-foreground">{activity.category}</p>
-            <p className="text-xs text-muted-foreground">{activity.time}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
+  return <Timeline items={activities} />;
 }
 

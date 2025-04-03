@@ -1,16 +1,16 @@
-"use client";
-
 import {
   CheckCircle,
   Clock,
   Code,
   Filter,
-  Plus,
   Search,
   XCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { PracticeSession } from "./types";
+import { AddPracticeDialog } from "./add-practice-dialog";
+
 import {
   Card,
   CardContent,
@@ -29,19 +29,138 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AddPracticeDialog } from "./add-practice-dialog";
-import { usePracticeSessions } from "./hooks/usePracticeSessions";
+import { PracticeTypeSelector } from "./practice-type-selector";
 
-export default function PracticePage() {
-  const { sessions, isLoading, error } = usePracticeSessions();
-
-  if (isLoading) {
-    return <div className="p-8">Loading practice sessions...</div>;
-  }
-
-  if (error) {
-    return <div className="p-8 text-red-500">Error: {error}</div>;
-  }
+export default function PracticePage({
+  initialSessions,
+}: {
+  initialSessions?: PracticeSession[];
+}) {
+  const renderSessionDetails = (session: PracticeSession) => {
+    switch (session.type) {
+      case "leetcode":
+        return (
+          <>
+            <p className="text-sm text-muted-foreground">
+              {session.description}
+            </p>
+            <div className="mt-2 flex items-center gap-2">
+              <Badge
+                variant={session.status === "solved" ? "default" : "secondary"}
+              >
+                {session.status}
+              </Badge>
+              <Badge variant="outline">{session.category}</Badge>
+              <Badge
+                variant="outline"
+                className={
+                  session.difficulty === "easy"
+                    ? "text-green-500"
+                    : session.difficulty === "medium"
+                    ? "text-yellow-500"
+                    : "text-red-500"
+                }
+              >
+                {session.difficulty}
+              </Badge>
+            </div>
+            <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {session.duration} min
+              </div>
+              <div className="flex items-center gap-1">
+                <Code className="h-4 w-4" />
+                {session.language}
+              </div>
+            </div>
+            {session.notes && <p className="mt-4 text-sm">{session.notes}</p>}
+          </>
+        );
+      case "mini-challenge":
+        return (
+          <>
+            <p className="text-sm text-muted-foreground">
+              <a
+                href={session.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                View Challenge
+              </a>
+            </p>
+            <div className="mt-2 flex items-center gap-2">
+              <Badge
+                variant={
+                  session.status === "completed" ? "default" : "secondary"
+                }
+              >
+                {session.status}
+              </Badge>
+            </div>
+            <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                Est: {session.estimatedDuration} min
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                Actual: {session.actualDuration} min
+              </div>
+            </div>
+            {session.learnings && (
+              <p className="mt-4 text-sm">{session.learnings}</p>
+            )}
+          </>
+        );
+      case "study":
+        return (
+          <>
+            <p className="text-sm text-muted-foreground">{session.resources}</p>
+            <div className="mt-2 flex items-center gap-2">
+              <Badge variant="outline">{session.comprehensionLevel}</Badge>
+            </div>
+            <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {session.duration} min
+              </div>
+            </div>
+            {session.keyTakeaways && (
+              <div className="mt-4">
+                <p className="text-sm font-medium">Key Takeaways:</p>
+                <p className="text-sm text-muted-foreground">
+                  {session.keyTakeaways}
+                </p>
+              </div>
+            )}
+            {session.nextSteps && (
+              <div className="mt-2">
+                <p className="text-sm font-medium">Next Steps:</p>
+                <p className="text-sm text-muted-foreground">
+                  {session.nextSteps}
+                </p>
+              </div>
+            )}
+          </>
+        );
+      case "typing":
+        return (
+          <>
+            <div className="mt-2 flex items-center gap-4">
+              <Badge variant="outline">{session.wpm} WPM</Badge>
+              <Badge variant="outline">{session.accuracy}% Accuracy</Badge>
+            </div>
+            {session.notes && (
+              <p className="mt-4 text-sm text-muted-foreground">
+                {session.notes}
+              </p>
+            )}
+          </>
+        );
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -52,7 +171,7 @@ export default function PracticePage() {
             Track your coding practice and progress
           </p>
         </div>
-        <AddPracticeDialog />
+        <PracticeTypeSelector />
       </div>
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <div className="relative flex-1">
@@ -92,7 +211,11 @@ export default function PracticePage() {
           <span className="sr-only">Filter</span>
         </Button>
       </div>
-      <Tabs key={sessions.length} defaultValue="all" className="space-y-4">
+      <Tabs
+        key={initialSessions?.length}
+        defaultValue="all"
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="recent">Recent</TabsTrigger>
@@ -100,55 +223,27 @@ export default function PracticePage() {
           <TabsTrigger value="unsolved">Unsolved</TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="space-y-4">
-          {sessions.map((session) => (
+          {initialSessions?.map((session) => (
             <Card key={session.id}>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>{session.title}</CardTitle>
-                    <CardDescription>{session.description}</CardDescription>
-                  </div>
-                  {session.status === "solved" ? (
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                  ) : session.status === "unsolved" ? (
-                    <XCircle className="h-5 w-5 text-red-500" />
-                  ) : (
-                    <Clock className="h-5 w-5 text-yellow-500" />
-                  )}
-                </div>
+                <CardTitle>
+                  {session.type === "leetcode"
+                    ? session.title
+                    : session.type === "mini-challenge"
+                    ? session.title
+                    : session.type === "study"
+                    ? session.topic
+                    : session.type === "typing"
+                    ? `Typing Practice - ${new Date(
+                        session.createdAt
+                      ).toLocaleDateString()}`
+                    : "Unknown Session Type"}
+                </CardTitle>
+                {renderSessionDetails(session)}
               </CardHeader>
-              <CardContent>
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                  <div className="flex items-center space-x-2">
-                    <Badge>{session.category}</Badge>
-                    <Badge variant="outline">{session.difficulty}</Badge>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4" />
-                    <span>{session.duration} minutes</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Code className="h-4 w-4" />
-                    <span>{session.language}</span>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <p className="text-sm text-muted-foreground">
-                    {session.notes}
-                  </p>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <AddPracticeDialog
-                  mode="edit"
-                  session={session}
-                  trigger={<Button variant="outline">View Details</Button>}
-                />
-                <Button>Add Notes</Button>
-              </CardFooter>
             </Card>
           ))}
-          {sessions.length === 0 && (
+          {initialSessions?.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No practice sessions yet. Click "Add Practice Session" to get
               started!
@@ -156,8 +251,8 @@ export default function PracticePage() {
           )}
         </TabsContent>
         <TabsContent value="recent" className="space-y-4">
-          {sessions
-            .sort(
+          {initialSessions
+            ?.sort(
               (a, b) =>
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime()
@@ -168,39 +263,42 @@ export default function PracticePage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle>{session.title}</CardTitle>
-                      <CardDescription>{session.description}</CardDescription>
+                      <CardTitle>
+                        {session.type === "leetcode"
+                          ? session.title
+                          : session.type === "mini-challenge"
+                          ? session.title
+                          : session.type === "study"
+                          ? session.topic
+                          : session.type === "typing"
+                          ? `Typing Practice - ${new Date(
+                              session.createdAt
+                            ).toLocaleDateString()}`
+                          : "Unknown Session Type"}
+                      </CardTitle>
+                      <CardDescription>
+                        {session.type === "leetcode"
+                          ? session.description
+                          : session.type === "mini-challenge"
+                          ? session.link
+                          : session.type === "study"
+                          ? session.resources
+                          : session.type === "typing"
+                          ? `WPM: ${session.wpm}, Accuracy: ${session.accuracy}%`
+                          : ""}
+                      </CardDescription>
                     </div>
-                    {session.status === "solved" ? (
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                    ) : session.status === "unsolved" ? (
-                      <XCircle className="h-5 w-5 text-red-500" />
-                    ) : (
-                      <Clock className="h-5 w-5 text-yellow-500" />
-                    )}
+                    {session.type === "leetcode" &&
+                      (session.status === "solved" ? (
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      ) : session.status === "unsolved" ? (
+                        <XCircle className="h-5 w-5 text-red-500" />
+                      ) : (
+                        <Clock className="h-5 w-5 text-yellow-500" />
+                      ))}
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <div className="flex items-center space-x-2">
-                      <Badge>{session.category}</Badge>
-                      <Badge variant="outline">{session.difficulty}</Badge>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      <span>{session.duration} minutes</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Code className="h-4 w-4" />
-                      <span>{session.language}</span>
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-sm text-muted-foreground">
-                      {session.notes}
-                    </p>
-                  </div>
-                </CardContent>
+                <CardContent>{renderSessionDetails(session)}</CardContent>
                 <CardFooter className="flex justify-between">
                   <AddPracticeDialog
                     mode="edit"
@@ -211,7 +309,7 @@ export default function PracticePage() {
                 </CardFooter>
               </Card>
             ))}
-          {sessions.length === 0 && (
+          {initialSessions?.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No practice sessions yet. Click "Add Practice Session" to get
               started!
@@ -219,8 +317,13 @@ export default function PracticePage() {
           )}
         </TabsContent>
         <TabsContent value="solved" className="space-y-4">
-          {sessions
-            .filter((session) => session.status === "solved")
+          {initialSessions
+            ?.filter(
+              (
+                session
+              ): session is Extract<PracticeSession, { type: "leetcode" }> =>
+                session.type === "leetcode" && session.status === "solved"
+            )
             .map((session) => (
               <Card key={session.id}>
                 <CardHeader>
@@ -232,27 +335,7 @@ export default function PracticePage() {
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <div className="flex items-center space-x-2">
-                      <Badge>{session.category}</Badge>
-                      <Badge variant="outline">{session.difficulty}</Badge>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      <span>{session.duration} minutes</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Code className="h-4 w-4" />
-                      <span>{session.language}</span>
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-sm text-muted-foreground">
-                      {session.notes}
-                    </p>
-                  </div>
-                </CardContent>
+                <CardContent>{renderSessionDetails(session)}</CardContent>
                 <CardFooter className="flex justify-between">
                   <AddPracticeDialog
                     mode="edit"
@@ -263,16 +346,21 @@ export default function PracticePage() {
                 </CardFooter>
               </Card>
             ))}
-          {sessions.filter((session) => session.status === "solved").length ===
-            0 && (
+          {initialSessions?.filter((session) => session.status === "solved")
+            .length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No solved practice sessions yet.
             </div>
           )}
         </TabsContent>
         <TabsContent value="unsolved" className="space-y-4">
-          {sessions
-            .filter((session) => session.status === "unsolved")
+          {initialSessions
+            ?.filter(
+              (
+                session
+              ): session is Extract<PracticeSession, { type: "leetcode" }> =>
+                session.type === "leetcode" && session.status === "unsolved"
+            )
             .map((session) => (
               <Card key={session.id}>
                 <CardHeader>
@@ -284,27 +372,7 @@ export default function PracticePage() {
                     <XCircle className="h-5 w-5 text-red-500" />
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <div className="flex items-center space-x-2">
-                      <Badge>{session.category}</Badge>
-                      <Badge variant="outline">{session.difficulty}</Badge>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      <span>{session.duration} minutes</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Code className="h-4 w-4" />
-                      <span>{session.language}</span>
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-sm text-muted-foreground">
-                      {session.notes}
-                    </p>
-                  </div>
-                </CardContent>
+                <CardContent>{renderSessionDetails(session)}</CardContent>
                 <CardFooter className="flex justify-between">
                   <AddPracticeDialog
                     mode="edit"
@@ -315,7 +383,7 @@ export default function PracticePage() {
                 </CardFooter>
               </Card>
             ))}
-          {sessions.filter((session) => session.status === "unsolved")
+          {initialSessions?.filter((session) => session.status === "unsolved")
             .length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No unsolved practice sessions yet.
