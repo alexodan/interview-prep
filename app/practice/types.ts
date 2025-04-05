@@ -50,7 +50,11 @@ export type PracticeSession =
 
 export type NewPracticeSession = Omit<PracticeSession, "id" | "createdAt">;
 
-export type LeetCodeFormState = {
+type BaseFormState = {
+  createdAt: string;
+};
+
+export type LeetCodeFormState = BaseFormState & {
   type: "leetcode";
   title: string;
   description: string;
@@ -62,7 +66,7 @@ export type LeetCodeFormState = {
   notes: string;
 };
 
-export type MiniChallengeFormState = {
+export type MiniChallengeFormState = BaseFormState & {
   type: "mini-challenge";
   title: string;
   link: string;
@@ -72,7 +76,7 @@ export type MiniChallengeFormState = {
   learnings: string;
 };
 
-export type StudyFormState = {
+export type StudyFormState = BaseFormState & {
   type: "study";
   topic: string;
   resources: string;
@@ -82,14 +86,14 @@ export type StudyFormState = {
   nextSteps: string;
 };
 
-export type TypingFormState = {
+export type TypingFormState = BaseFormState & {
   type: "typing";
   wpm: string;
   accuracy: string;
   notes: string;
 };
 
-export type FormState =
+export type PracticeFormState =
   | LeetCodeFormState
   | MiniChallengeFormState
   | StudyFormState

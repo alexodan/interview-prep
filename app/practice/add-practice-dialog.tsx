@@ -29,24 +29,29 @@ interface AddPracticeDialogProps {
   mode?: "add" | "edit";
   session?: PracticeSession;
   trigger?: React.ReactNode;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }
 
 export function AddPracticeDialog({
   mode = "add",
   session,
   trigger,
+  open,
+  setOpen,
 }: AddPracticeDialogProps): JSX.Element {
   const {
     formData,
-    open,
-    setOpen,
+    open: formOpen,
+    setOpen: setFormOpen,
     handleInputChange,
     handleSubmit,
     handleDelete,
-  } = usePracticeForm({ mode, session });
+  } = usePracticeForm({ mode, session, open, setOpen });
 
   const renderFields = () => {
-    switch (formData.type) {
+    if (!formData) return null;
+    switch (formData?.type) {
       case "leetcode":
         return (
           <>
@@ -55,7 +60,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="title">Title</Label>
                 <Input
                   id="title"
-                  value={formData.title}
+                  value={formData?.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
                 />
               </div>
@@ -63,7 +68,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  value={formData.description}
+                  value={formData?.description}
                   onChange={(e) =>
                     handleInputChange("description", e.target.value)
                   }
@@ -73,7 +78,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="category">Category</Label>
                 <Input
                   id="category"
-                  value={formData.category}
+                  value={formData?.category}
                   onChange={(e) =>
                     handleInputChange("category", e.target.value)
                   }
@@ -82,7 +87,7 @@ export function AddPracticeDialog({
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="difficulty">Difficulty</Label>
                 <Select
-                  value={formData.difficulty}
+                  value={formData?.difficulty}
                   onValueChange={(value) =>
                     handleInputChange("difficulty", value)
                   }
@@ -101,7 +106,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="duration">Duration (minutes)</Label>
                 <Input
                   id="duration"
-                  value={formData.duration}
+                  value={formData?.duration}
                   onChange={(e) =>
                     handleInputChange("duration", e.target.value)
                   }
@@ -111,7 +116,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="language">Language</Label>
                 <Input
                   id="language"
-                  value={formData.language}
+                  value={formData?.language}
                   onChange={(e) =>
                     handleInputChange("language", e.target.value)
                   }
@@ -120,7 +125,7 @@ export function AddPracticeDialog({
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="status">Status</Label>
                 <Select
-                  value={formData.status}
+                  value={formData?.status}
                   onValueChange={(value) => handleInputChange("status", value)}
                 >
                   <SelectTrigger>
@@ -137,7 +142,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="notes">Notes</Label>
                 <Textarea
                   id="notes"
-                  value={formData.notes}
+                  value={formData?.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
                 />
               </div>
@@ -152,7 +157,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="title">Title</Label>
                 <Input
                   id="title"
-                  value={formData.title}
+                  value={formData?.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
                 />
               </div>
@@ -160,7 +165,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="link">Link</Label>
                 <Input
                   id="link"
-                  value={formData.link}
+                  value={formData?.link}
                   onChange={(e) => handleInputChange("link", e.target.value)}
                 />
               </div>
@@ -170,7 +175,7 @@ export function AddPracticeDialog({
                 </Label>
                 <Input
                   id="estimatedDuration"
-                  value={formData.estimatedDuration}
+                  value={formData?.estimatedDuration}
                   onChange={(e) =>
                     handleInputChange("estimatedDuration", e.target.value)
                   }
@@ -182,7 +187,7 @@ export function AddPracticeDialog({
                 </Label>
                 <Input
                   id="actualDuration"
-                  value={formData.actualDuration}
+                  value={formData?.actualDuration}
                   onChange={(e) =>
                     handleInputChange("actualDuration", e.target.value)
                   }
@@ -191,7 +196,7 @@ export function AddPracticeDialog({
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="status">Status</Label>
                 <Select
-                  value={formData.status}
+                  value={formData?.status}
                   onValueChange={(value) => handleInputChange("status", value)}
                 >
                   <SelectTrigger>
@@ -208,7 +213,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="learnings">Learnings</Label>
                 <Textarea
                   id="learnings"
-                  value={formData.learnings}
+                  value={formData?.learnings}
                   onChange={(e) =>
                     handleInputChange("learnings", e.target.value)
                   }
@@ -225,7 +230,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="topic">Topic</Label>
                 <Input
                   id="topic"
-                  value={formData.topic}
+                  value={formData?.topic}
                   onChange={(e) => handleInputChange("topic", e.target.value)}
                 />
               </div>
@@ -233,7 +238,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="resources">Resources</Label>
                 <Input
                   id="resources"
-                  value={formData.resources}
+                  value={formData?.resources}
                   onChange={(e) =>
                     handleInputChange("resources", e.target.value)
                   }
@@ -243,7 +248,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="duration">Duration (minutes)</Label>
                 <Input
                   id="duration"
-                  value={formData.duration}
+                  value={formData?.duration}
                   onChange={(e) =>
                     handleInputChange("duration", e.target.value)
                   }
@@ -252,7 +257,7 @@ export function AddPracticeDialog({
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="comprehensionLevel">Comprehension Level</Label>
                 <Select
-                  value={formData.comprehensionLevel}
+                  value={formData?.comprehensionLevel}
                   onValueChange={(value) =>
                     handleInputChange("comprehensionLevel", value)
                   }
@@ -271,7 +276,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="keyTakeaways">Key Takeaways</Label>
                 <Textarea
                   id="keyTakeaways"
-                  value={formData.keyTakeaways}
+                  value={formData?.keyTakeaways}
                   onChange={(e) =>
                     handleInputChange("keyTakeaways", e.target.value)
                   }
@@ -281,7 +286,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="nextSteps">Next Steps</Label>
                 <Textarea
                   id="nextSteps"
-                  value={formData.nextSteps}
+                  value={formData?.nextSteps}
                   onChange={(e) =>
                     handleInputChange("nextSteps", e.target.value)
                   }
@@ -298,7 +303,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="wpm">WPM</Label>
                 <Input
                   id="wpm"
-                  value={formData.wpm}
+                  value={formData?.wpm}
                   onChange={(e) => handleInputChange("wpm", e.target.value)}
                 />
               </div>
@@ -306,7 +311,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="accuracy">Accuracy (%)</Label>
                 <Input
                   id="accuracy"
-                  value={formData.accuracy}
+                  value={formData?.accuracy}
                   onChange={(e) =>
                     handleInputChange("accuracy", e.target.value)
                   }
@@ -316,7 +321,7 @@ export function AddPracticeDialog({
                 <Label htmlFor="notes">Notes</Label>
                 <Textarea
                   id="notes"
-                  value={formData.notes}
+                  value={formData?.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
                 />
               </div>
@@ -327,7 +332,7 @@ export function AddPracticeDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={formOpen} onOpenChange={setFormOpen}>
       <DialogTrigger asChild>
         {trigger || (
           <Button>
@@ -353,7 +358,7 @@ export function AddPracticeDialog({
             <Input
               id="title"
               placeholder="e.g. Two Sum"
-              value={formData.title}
+              value={formData?.title}
               onChange={(e) => handleInputChange("title", e.target.value)}
             />
           </div>
@@ -362,7 +367,7 @@ export function AddPracticeDialog({
             <Textarea
               id="description"
               placeholder="Brief description of the problem..."
-              value={formData.description}
+              value={formData?.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>
@@ -372,7 +377,7 @@ export function AddPracticeDialog({
                 Category <span className="text-red-500">*</span>
               </Label>
               <Select
-                value={formData.category}
+                value={formData?.category}
                 onValueChange={(value) => handleInputChange("category", value)}
               >
                 <SelectTrigger>
@@ -392,7 +397,7 @@ export function AddPracticeDialog({
                 Difficulty <span className="text-red-500">*</span>
               </Label>
               <Select
-                value={formData.difficulty}
+                value={formData?.difficulty}
                 onValueChange={(value) =>
                   handleInputChange("difficulty", value)
                 }
@@ -416,14 +421,14 @@ export function AddPracticeDialog({
                 type="number"
                 placeholder="e.g. 30"
                 min="1"
-                value={formData.duration}
+                value={formData?.duration}
                 onChange={(e) => handleInputChange("duration", e.target.value)}
               />
             </div>
             <div className="grid gap-2">
               <Label>Programming Language</Label>
               <Select
-                value={formData.language}
+                value={formData?.language}
                 onValueChange={(value) => handleInputChange("language", value)}
               >
                 <SelectTrigger>
@@ -443,7 +448,7 @@ export function AddPracticeDialog({
               Status <span className="text-red-500">*</span>
             </Label>
             <Select
-              value={formData.status}
+              value={formData?.status}
               onValueChange={(value) => handleInputChange("status", value)}
             >
               <SelectTrigger>
@@ -461,7 +466,7 @@ export function AddPracticeDialog({
             <Textarea
               id="notes"
               placeholder="Describe your approach, implementation details, or areas for improvement..."
-              value={formData.notes}
+              value={formData?.notes}
               onChange={(e) => handleInputChange("notes", e.target.value)}
             />
           </div>

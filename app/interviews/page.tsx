@@ -150,7 +150,7 @@ export default async function InterviewsPage() {
                 </CardContent>
                 <CardFooter className="flex justify-between">
                   <Button variant="outline">View Details</Button>
-                  <Button>Add Notes</Button>
+                  <Button>Add Notes?</Button>
                 </CardFooter>
               </Card>
             ))}

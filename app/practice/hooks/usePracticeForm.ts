@@ -1,27 +1,50 @@
+"use client";
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { usePracticeSessions } from "./usePracticeSessions";
-import { FormState, PracticeSession } from "../types";
+import {
+  PracticeFormState,
+  LeetCodeFormState,
+  MiniChallengeFormState,
+  PracticeSession,
+  StudyFormState,
+  TypingFormState,
+} from "../types";
 
 interface UsePracticeFormProps {
   mode: "add" | "edit";
   session?: PracticeSession;
   onSuccess?: () => void;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-export function usePracticeForm({ mode, session, onSuccess }: UsePracticeFormProps) {
-  const [formData, setFormData] = useState<FormState>(() => getInitialState(session));
-  const [open, setOpen] = useState(false);
+type FormStateKeys = keyof (LeetCodeFormState &
+  MiniChallengeFormState &
+  StudyFormState &
+  TypingFormState);
+
+export function usePracticeForm({
+  mode,
+  session,
+  onSuccess,
+  open,
+  setOpen,
+}: UsePracticeFormProps) {
+  const [formData, setFormData] = useState<PracticeFormState>(() =>
+    getInitialState(session)
+  );
   const { saveSession, updateSession, deleteSession } = usePracticeSessions();
 
-  const handleInputChange = <T extends keyof FormState>(field: T, value: FormState[T]) => {
+  const handleInputChange = (field: FormStateKeys, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const validateForm = (data: FormState): boolean => {
+  const validateForm = (data: PracticeFormState): boolean => {
     switch (data.type) {
       case "leetcode":
         if (!data.title || !data.category || !data.difficulty || !data.status) {
@@ -106,7 +129,7 @@ export function usePracticeForm({ mode, session, onSuccess }: UsePracticeFormPro
   };
 }
 
-function getInitialState(session?: PracticeSession): FormState {
+function getInitialState(session?: PracticeSession): PracticeFormState {
   if (!session) {
     return {
       type: "leetcode",
@@ -118,6 +141,7 @@ function getInitialState(session?: PracticeSession): FormState {
       language: "",
       status: "",
       notes: "",
+      createdAt: new Date().toISOString(),
     };
   }
 
@@ -133,6 +157,7 @@ function getInitialState(session?: PracticeSession): FormState {
         language: session.language,
         status: session.status,
         notes: session.notes || "",
+        createdAt: session.createdAt,
       };
     case "mini-challenge":
       return {
@@ -143,6 +168,7 @@ function getInitialState(session?: PracticeSession): FormState {
         actualDuration: session.actualDuration.toString(),
         status: session.status,
         learnings: session.learnings || "",
+        createdAt: session.createdAt,
       };
     case "study":
       return {
@@ -153,6 +179,7 @@ function getInitialState(session?: PracticeSession): FormState {
         comprehensionLevel: session.comprehensionLevel,
         keyTakeaways: session.keyTakeaways || "",
         nextSteps: session.nextSteps || "",
+        createdAt: session.createdAt,
       };
     case "typing":
       return {
@@ -160,11 +187,14 @@ function getInitialState(session?: PracticeSession): FormState {
         wpm: session.wpm?.toString() || "",
         accuracy: session.accuracy?.toString() || "",
         notes: session.notes || "",
+        createdAt: session.createdAt,
       };
   }
 }
 
-function mapFormDataToSession(formData: FormState): Omit<PracticeSession, "id"> {
+function mapFormDataToSession(
+  formData: PracticeFormState
+): Omit<PracticeSession, "id"> {
   switch (formData.type) {
     case "leetcode":
       return {
@@ -194,7 +224,10 @@ function mapFormDataToSession(formData: FormState): Omit<PracticeSession, "id"> 
         topic: formData.topic,
         resources: formData.resources,
         duration: parseInt(formData.duration) || 0,
-        comprehensionLevel: formData.comprehensionLevel as "low" | "medium" | "high",
+        comprehensionLevel: formData.comprehensionLevel as
+          | "low"
+          | "medium"
+          | "high",
         keyTakeaways: formData.keyTakeaways || undefined,
         nextSteps: formData.nextSteps || undefined,
       };

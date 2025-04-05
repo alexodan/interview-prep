@@ -76,7 +76,7 @@ export function MiniChallengeDialog({
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.link || !formData.status) {
+    if (!formData.title || !formData.estimatedDuration) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -90,14 +90,14 @@ export function MiniChallengeDialog({
     };
 
     let result;
-    if (mode === 'edit' && session) {
+    if (mode === "edit" && session) {
       result = await updateSession(session.id, sessionData);
     } else {
       result = await saveSession(sessionData);
     }
 
     if (result.success) {
-      if (mode === 'add') {
+      if (mode === "add") {
         setFormData({
           title: "",
           link: "",
@@ -109,12 +109,21 @@ export function MiniChallengeDialog({
       }
       setIsOpen(false);
       onOpenChange?.(false);
-      toast.success(mode === 'add' ? "Mini challenge saved successfully" : "Mini challenge updated successfully");
+      toast.success(
+        mode === "add"
+          ? "Mini challenge saved successfully"
+          : "Mini challenge updated successfully"
+      );
     } else {
-      toast.error(mode === 'add' ? "Failed to save mini challenge" : "Failed to update mini challenge");
+      toast.error(
+        mode === "add"
+          ? "Failed to save mini challenge"
+          : "Failed to update mini challenge"
+      );
     }
   };
 
+  // TODO: stuck in mini-challenge-dialog with server actions
   const effectiveOpen = open !== undefined ? open : isOpen;
   const handleOpenChange = (newOpen: boolean) => {
     setIsOpen(newOpen);
@@ -134,12 +143,15 @@ export function MiniChallengeDialog({
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="title">Challenge Title</Label>
+            <Label htmlFor="title">
+              Challenge Title <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => handleInputChange("title", e.target.value)}
               placeholder="Build a Todo App"
+              required
             />
           </div>
           <div className="grid gap-2">
@@ -153,13 +165,18 @@ export function MiniChallengeDialog({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="estimatedDuration">Estimated Time (minutes)</Label>
+              <Label htmlFor="estimatedDuration">
+                Estimated Time (minutes) <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="estimatedDuration"
                 type="number"
                 value={formData.estimatedDuration}
-                onChange={(e) => handleInputChange("estimatedDuration", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("estimatedDuration", e.target.value)
+                }
                 placeholder="60"
+                required
               />
             </div>
             <div className="grid gap-2">
@@ -168,7 +185,9 @@ export function MiniChallengeDialog({
                 id="actualDuration"
                 type="number"
                 value={formData.actualDuration}
-                onChange={(e) => handleInputChange("actualDuration", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("actualDuration", e.target.value)
+                }
                 placeholder="75"
               />
             </div>
